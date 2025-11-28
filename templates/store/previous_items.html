@@ -1,0 +1,24 @@
+{% load humanize %}
+{% if items %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for item in items %}
+    <div class="bg-white rounded-lg shadow p-4 flex items-center justify-between">
+        <div class="flex items-center">
+            {% if item.product.image %}
+            <img class="h-12 w-12 rounded object-cover mr-4" src="{{ item.product.image.url }}" alt="">
+            {% endif %}
+            <div>
+                <h3 class="text-sm font-medium text-gray-900">{{ item.product.title }}</h3>
+                <p class="text-sm text-gray-500">Removed: {{ item.created_at|date:"M d, Y" }}</p>
+            </div>
+        </div>
+        <form action="{% url 'store:cart-history-restore' item.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">Restore</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="text-gray-500 italic">No previously removed items.</p>
+{% endif %}

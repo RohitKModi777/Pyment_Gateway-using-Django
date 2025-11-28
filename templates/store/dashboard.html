@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Dashboard - PayDemo{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-6 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+        <p class="text-gray-600 dark:text-gray-400">Welcome back, {{ request.user.first_name|default:request.user.email }}</p>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid md:grid-cols-3 gap-6 mb-12">
+        <!-- Profile Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <div class="flex justify-between items-start mb-4">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Profile</h2>
+                <a href="{% url 'store:profile-edit' %}" class="text-blue-600 dark:text-blue-400 hover:text-blue-700 text-sm font-medium">Edit</a>
+            </div>
+            
+            <div class="flex items-center mb-4">
+                {% if profile.avatar %}
+                    <img src="{{ profile.avatar.url }}" alt="Avatar" class="w-12 h-12 rounded-full object-cover mr-4 border-2 border-gray-200 dark:border-gray-600">
+                {% else %}
+                    <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-4 text-white text-sm font-bold">
+                        {{ request.user.first_name|first|default:request.user.email|first|upper }}
+                    </div>
+                {% endif %}
+                <div>
+                    <p class="font-semibold text-gray-900 dark:text-white">{{ request.user.get_full_name|default:request.user.email }}</p>
+                    <p class="text-sm text-gray-500">{{ request.user.email }}</p>
+                </div>
+            </div>
+
+            <div class="space-y-2 text-sm">
+                <p class="flex items-center text-gray-600 dark:text-gray-300">
+                    <span class="font-medium w-16">Phone:</span>
+                    {{ profile.phone|default:"Not set" }}
+                </p>
+                <p class="flex items-start text-gray-600 dark:text-gray-300">
+                    <span class="font-medium w-16">Address:</span>
+                    <span class="flex-1">{{ profile.address|default:"Not set" }}</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Cart Summary -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Cart Summary</h2>
+            <div class="text-center">
+                <div class="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">{{ cart_summary.count }}</div>
+                <p class="text-gray-500 mb-4">Items in Cart</p>
+                <div class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">₹{{ cart_summary.total|floatformat:2|intcomma }}</div>
+                <a href="{% url 'store:cart' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                    View Cart
+                </a>
+            </div>
+        </div>
+
+        <!-- Account Stats -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Account Stats</h2>
+            <div class="space-y-4">
+                <div>
+                    <p class="text-sm text-gray-500">Member Since</p>
+                    <p class="font-semibold text-gray-900 dark:text-white">{{ request.user.date_joined|date:"M d, Y" }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Total Orders</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ orders.count }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transactions -->
+    <div class="mb-12">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Recent Transactions</h2>
+            <span class="text-sm text-gray-500">{{ transactions.count }} transactions</span>
+        </div>
+        
+        {% if transactions %}
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Order ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Amount</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                        {% for txn in transactions %}
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">{{ txn.created_at|date:"M d, Y" }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">#{{ txn.order.id|truncatechars:10 }}</td>
+                            <td class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">₹{{ txn.amount_display|floatformat:2|intcomma }}</td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full
+                                    {% if txn.status == 'success' %}bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400
+                                    {% elif txn.status == 'failed' %}bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400
+                                    {% else %}bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400{% endif %}">
+                                    {{ txn.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-12 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+            <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">No Transactions</h3>
+            <p class="text-gray-500 dark:text-gray-400">Your transaction history will appear here</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Orders -->
+    <div>
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Order History</h2>
+            <span class="text-sm text-gray-500">{{ orders.count }} orders</span>
+        </div>
+        
+        {% if orders %}
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Order ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Total</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                        {% for order in orders %}
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                            <td class="px-6 py-4">
+                                <a href="{% url 'store:order-detail' order.id %}" class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                                    #{{ order.id|truncatechars:10 }}
+                                </a>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">{{ order.created_at|date:"M d, Y" }}</td>
+                            <td class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">₹{{ order.amount_display|floatformat:2|intcomma }}</td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full
+                                    {% if order.status == 'paid' %}bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400
+                                    {% elif order.status == 'failed' %}bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400
+                                    {% else %}bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400{% endif %}">
+                                    {{ order.get_status_display }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <a href="{% url 'store:order-detail' order.id %}" class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium">
+                                    View Details
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-12 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+            <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">No Orders Yet</h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-4">Start shopping to see your orders here</p>
+            <a href="{% url 'store:product-list' %}" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                Browse Products
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

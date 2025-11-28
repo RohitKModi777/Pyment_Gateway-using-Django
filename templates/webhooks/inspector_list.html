@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Webhook Inspector · PayDemo{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between">
+    <div>
+        <p class="text-sm uppercase text-slate-500">Tools</p>
+        <h1 class="text-3xl font-semibold text-slate-900">Webhook inspector</h1>
+    </div>
+    <a href="{% url 'webhooks:developer-config' %}" class="text-sm text-indigo-400">Developer config</a>
+</div>
+<div class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="flex items-center justify-between text-xs uppercase text-slate-500">
+        <span>Payload</span>
+        <span>Verified</span>
+    </div>
+    <div class="mt-4 divide-y divide-slate-100">
+        {% for log in logs %}
+            <a href="{% url 'webhooks:inspector-detail' log.pk %}" class="flex items-center justify-between py-4 hover:text-indigo-600">
+                <div>
+                    <p class="font-semibold text-slate-900">{{ log.provider|title }} · {{ log.received_at|date:"M j, H:i" }}</p>
+                    <p class="text-sm text-slate-500">{{ log.payload.event|default:"unknown" }}</p>
+                </div>
+                <span class="rounded-full px-3 py-1 text-xs font-semibold {% if log.verified %}bg-emerald-100 text-emerald-700{% else %}bg-rose-100 text-rose-700{% endif %}">{{ log.verified|yesno:"Verified,Failed" }}</span>
+            </a>
+        {% empty %}
+            <p class="py-4 text-sm text-slate-500">No webhook logs yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+

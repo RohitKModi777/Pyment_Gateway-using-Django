@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% block title %}Products · PayDemo{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Header Section -->
+    <div class="flex flex-col lg:flex-row gap-6 lg:items-center lg:justify-between mb-10">
+        <div class="space-y-2">
+            <div class="inline-flex items-center px-3 py-1 bg-indigo-100 dark:bg-indigo-900/30 rounded-full">
+                <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                </svg>
+                <span class="text-xs uppercase tracking-wider font-bold text-indigo-700 dark:text-indigo-300">Product Catalog</span>
+            </div>
+            <h1 class="text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white">
+                Browse Our Collection
+            </h1>
+            <p class="text-lg text-slate-600 dark:text-slate-400">Discover amazing products in our demo inventory</p>
+        </div>
+        
+        <!-- Search Form -->
+        <form method="get" class="w-full lg:max-w-md">
+            <div class="relative group">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                    <svg class="w-5 h-5 text-slate-400 group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+                <input 
+                    type="text" 
+                    name="q" 
+                    value="{{ request.GET.q }}" 
+                    placeholder="Search products by name..." 
+                    class="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-slate-200 dark:border-gray-600 
+                           bg-white dark:bg-gray-700 text-slate-900 dark:text-white
+                           focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+                           placeholder:text-slate-400 dark:placeholder:text-slate-500
+                           transition-all duration-200">
+                <button 
+                    type="submit"
+                    class="absolute inset-y-0 right-0 flex items-center px-6 bg-gradient-to-r from-indigo-600 to-purple-600 
+                           text-white font-bold rounded-r-xl hover:from-indigo-700 hover:to-purple-700 
+                           transition-all duration-200 hover:shadow-lg group">
+                    <span class="hidden sm:inline mr-2">Search</span>
+                    <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                    </svg>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Active Search Indicator -->
+    {% if request.GET.q %}
+    <div class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-600 dark:border-blue-400 rounded-lg">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <div>
+                    <p class="text-sm font-bold text-blue-900 dark:text-blue-100">Search Results</p>
+                    <p class="text-xs text-blue-700 dark:text-blue-300">Showing results for: <span class="font-bold">"{{ request.GET.q }}"</span></p>
+                </div>
+            </div>
+            <a href="{% url 'store:product-list' %}" class="px-4 py-2 text-sm font-semibold text-blue-600 dark:text-blue-400 bg-white dark:bg-gray-800 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors">
+                Clear Search
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Products Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        {% for product in products %}
+            {% include "store/partials/product_card.html" with product=product %}
+        {% empty %}
+            <!-- Empty State -->
+            <div class="col-span-full">
+                <div class="text-center py-20 bg-white dark:bg-gray-800 rounded-2xl border border-slate-200 dark:border-gray-700 shadow-lg">
+                    <div class="w-24 h-24 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-gray-700 dark:to-gray-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-12 h-12 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">No Products Found</h3>
+                    <p class="text-slate-600 dark:text-slate-400 mb-6 max-w-md mx-auto">
+                        {% if request.GET.q %}
+                            We couldn't find any products matching "<span class="font-bold">{{ request.GET.q }}</span>". Try different keywords or browse all products.
+                        {% else %}
+                            There are no products available at the moment. Check back later!
+                        {% endif %}
+                    </p>
+                    {% if request.GET.q %}
+                    <a href="{% url 'store:product-list' %}" class="inline-flex items-center px-6 py-3 text-base font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl hover:shadow-lg transition-all hover:scale-105">
+                        View All Products
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                        </svg>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 bg-white dark:bg-gray-800 rounded-xl border border-slate-200 dark:border-gray-700 shadow-lg">
+        <div class="flex items-center text-sm text-slate-600 dark:text-slate-400">
+            <svg class="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+            </svg>
+            <span class="font-semibold">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        </div>
+        
+        <div class="flex items-center gap-3">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+                   class="inline-flex items-center px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 bg-white dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded-lg hover:bg-slate-50 dark:hover:bg-gray-600 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
+                    </svg>
+                </a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+                   class="inline-flex items-center px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg hover:shadow-lg transition-all hover:scale-105">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                    Previous
+                </a>
+            {% else %}
+                <button disabled class="inline-flex items-center px-4 py-2.5 text-sm font-semibold text-slate-400 dark:text-slate-600 bg-slate-100 dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded-lg cursor-not-allowed opacity-50">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <button disabled class="inline-flex items-center px-5 py-2.5 text-sm font-bold text-slate-400 dark:text-slate-600 bg-slate-100 dark:bg-gray-700 rounded-lg cursor-not-allowed opacity-50">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                    Previous
+                </button>
+            {% endif %}
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+                   class="inline-flex items-center px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg hover:shadow-lg transition-all hover:scale-105">
+                    Next
+                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+                   class="inline-flex items-center px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 bg-white dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded-lg hover:bg-slate-50 dark:hover:bg-gray-600 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            {% else %}
+                <button disabled class="inline-flex items-center px-5 py-2.5 text-sm font-bold text-slate-400 dark:text-slate-600 bg-slate-100 dark:bg-gray-700 rounded-lg cursor-not-allowed opacity-50">
+                    Next
+                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
+                <button disabled class="inline-flex items-center px-4 py-2.5 text-sm font-semibold text-slate-400 dark:text-slate-600 bg-slate-100 dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded-lg cursor-not-allowed opacity-50">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
+                    </svg>
+                </button>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- CTA Section for Empty Results -->
+    {% if not products and request.GET.q %}
+    <div class="mt-12 text-center p-12 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl border border-indigo-200 dark:border-indigo-800">
+        <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">Can't find what you're looking for?</h3>
+        <p class="text-slate-600 dark:text-slate-400 mb-6 max-w-2xl mx-auto">
+            Our catalog is constantly updated. Browse all products or check back later for new additions.
+        </p>
+        <a href="{% url 'store:product-list' %}" class="inline-flex items-center px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl hover:shadow-2xl transition-all hover:scale-105">
+            Browse All Products
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+            </svg>
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

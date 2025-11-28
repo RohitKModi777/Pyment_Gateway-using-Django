@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Log {{ log.pk }} · Webhook Inspector{% endblock %}
+{% load currency %}
+{% block content %}
+<a href="{% url 'webhooks:inspector' %}" class="text-sm text-indigo-400">&larr; Back to logs</a>
+<div class="mt-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+        <div>
+            <p class="text-sm uppercase text-slate-500">{{ log.provider|title }}</p>
+            <h1 class="text-2xl font-semibold text-slate-900">Event: {{ log.payload.event|default:"Unknown" }}</h1>
+            <p class="text-sm text-slate-500">{{ log.received_at|date:"M j, Y H:i" }}</p>
+        </div>
+        <span class="rounded-full px-3 py-1 text-xs font-semibold {% if log.verified %}bg-emerald-100 text-emerald-700{% else %}bg-rose-100 text-rose-700{% endif %}">{{ log.verified|yesno:"Verified,Failed" }}</span>
+    </div>
+    <div class="mt-6 grid gap-6 md:grid-cols-2">
+        <div>
+            <p class="text-sm font-semibold text-slate-500">Headers</p>
+            <pre class="mt-2 max-h-80 overflow-auto rounded-xl bg-slate-900/90 p-4 text-xs text-emerald-200">{{ log.headers|pretty_json }}</pre>
+        </div>
+        <div>
+            <p class="text-sm font-semibold text-slate-500">Payload</p>
+            <pre class="mt-2 max-h-80 overflow-auto rounded-xl bg-slate-900/90 p-4 text-xs text-emerald-200">{{ log.payload|pretty_json }}</pre>
+        </div>
+    </div>
+    <form method="post" action="{% url 'webhooks:inspector-replay' log.pk %}" class="mt-6">
+        {% csrf_token %}
+        <button class="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">Replay webhook</button>
+    </form>
+</div>
+{% endblock %}
+

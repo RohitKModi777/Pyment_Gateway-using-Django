@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load currency %}
+{% block title %}Transaction {{ transaction.id }} · PayDemo{% endblock %}
+{% block content %}
+<a href="{% url 'store:dashboard' %}" class="text-sm text-indigo-600">&larr; Back to dashboard</a>
+<div class="mt-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+            <p class="text-sm uppercase text-slate-500">Transaction</p>
+            <h1 class="text-2xl font-semibold text-slate-900">{{ transaction.reference|default:"Webhook" }}</h1>
+            <p class="text-sm text-slate-500">{{ transaction.created_at|date:"M j, Y H:i" }}</p>
+        </div>
+        <div class="text-right">
+            <p class="text-2xl font-semibold text-slate-900">₹{{ transaction.amount_cents|rupees }}</p>
+            <span class="text-xs uppercase tracking-wide {% if transaction.status == 'success' %}text-emerald-600{% elif transaction.status == 'failed' %}text-rose-600{% else %}text-amber-600{% endif %}">{{ transaction.get_status_display }}</span>
+        </div>
+    </div>
+    <div class="mt-6">
+        <p class="text-sm font-medium text-slate-500">Gateway payload</p>
+        <pre class="mt-2 max-h-96 overflow-auto rounded-xl bg-slate-900/90 p-4 text-xs text-emerald-200">{{ transaction.payload|pretty_json }}</pre>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,144 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Payment Received</title>
+</head>
+
+<body
+    style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div
+        style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1>💰 New Payment Received</h1>
+        <p>Order #{{ order.id }}</p>
+    </div>
+
+    <div style="background: #f9f9f9; padding: 30px; border: 1px solid #ddd;">
+        <div
+            style="background: #e8f5e9; border-left: 4px solid #4CAF50; padding: 15px; margin: 20px 0; border-radius: 4px;">
+            <strong>✓ Payment Confirmed</strong><br>
+            A new payment has been successfully processed through Razorpay.
+        </div>
+
+        <table style="width: 100%; margin: 20px 0;">
+            <tr>
+                <td style="width: 50%; padding: 10px;">
+                    <div
+                        style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <h4 style="margin: 0 0 10px 0; color: #11998e; font-size: 0.9em; text-transform: uppercase;">
+                            Total Amount</h4>
+                        <p style="margin: 0; font-size: 1.1em; font-weight: bold; color: #4CAF50;">₹{{
+                            total_amount|floatformat:2 }}</p>
+                    </div>
+                </td>
+                <td style="width: 50%; padding: 10px;">
+                    <div
+                        style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <h4 style="margin: 0 0 10px 0; color: #11998e; font-size: 0.9em; text-transform: uppercase;">
+                            Payment Status</h4>
+                        <p style="margin: 0; font-size: 1.1em; font-weight: bold; color: #4CAF50;">PAID</p>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <div
+            style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3 style="margin-top: 0; color: #11998e; border-bottom: 2px solid #11998e; padding-bottom: 10px;">Customer
+                Information</h3>
+            <table style="width: 100%;">
+                <tr>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #eee;"><strong>Name:</strong></td>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #eee;">{{ customer_name }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #eee;"><strong>Email:</strong></td>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #eee;">{{ customer_email }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 0;"><strong>User ID:</strong></td>
+                    <td style="padding: 10px 0;">{{ order.user.id }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <div
+            style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3 style="margin-top: 0; color: #11998e; border-bottom: 2px solid #11998e; padding-bottom: 10px;">Payment
+                Information</h3>
+            <table style="width: 100%;">
+                <tr>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #eee;"><strong>Order ID:</strong></td>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #eee;">{{ order.id }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #eee;"><strong>Payment ID:</strong></td>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #eee;">{{ payment_id }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #eee;"><strong>Razorpay Order ID:</strong></td>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #eee;">{{ order.razorpay_order_id }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 0;"><strong>Transaction ID:</strong></td>
+                    <td style="padding: 10px 0;">{{ transaction.id }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <div
+            style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3 style="margin-top: 0; color: #11998e; border-bottom: 2px solid #11998e; padding-bottom: 10px;">Order
+                Items</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #11998e; color: white;">
+                        <th style="padding: 12px; text-align: left;">Product</th>
+                        <th style="padding: 12px; text-align: left;">Qty</th>
+                        <th style="padding: 12px; text-align: left;">Unit Price</th>
+                        <th style="padding: 12px; text-align: left;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order_items %}
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #ddd;">{{ item.product.title }}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #ddd;">{{ item.qty }}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #ddd;">₹{{ item.unit_price_cents|intcomma }}
+                        </td>
+                        <td style="padding: 12px; border-bottom: 1px solid #ddd;">₹{{ item.line_total_cents|intcomma }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <tr style="font-weight: bold; font-size: 1.2em; background: #e8f5e9;">
+                        <td colspan="3" style="padding: 12px; text-align: right;">Total:</td>
+                        <td style="padding: 12px;">₹{{ total_amount|floatformat:2 }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="{{ admin_url }}"
+                style="display: inline-block; padding: 12px 30px; background: #11998e; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0;">View
+                in Admin Panel</a>
+        </div>
+
+        <p
+            style="margin-top: 30px; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+            <strong>⚠️ Action Required:</strong><br>
+            Please update the delivery status and process this order for shipment.
+        </p>
+    </div>
+
+    <div
+        style="text-align: center; padding: 20px; color: #777; font-size: 0.9em; border-top: 1px solid #ddd; margin-top: 20px;">
+        <p>PayDemo Admin Notification System</p>
+        <p>This is an automated notification. Do not reply to this email.</p>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}Home - PayDemo{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-900 py-16">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+            Secure Payments Made Simple
+        </h1>
+        <p class="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
+            Experience seamless Razorpay integration with Google OAuth authentication. Test payments in our secure sandbox environment.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'store:product-list' %}" 
+               class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">
+                Browse Products
+            </a>
+            <a href="{% url 'store:dashboard' %}" 
+               class="border-2 border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400 px-8 py-3 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 transition-colors font-semibold">
+                View Dashboard
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-16 bg-white dark:bg-gray-800">
+    <div class="max-w-6xl mx-auto px-6">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Why Choose PayDemo?</h2>
+            <p class="text-gray-600 dark:text-gray-300 text-lg">Built with modern technologies for secure payment processing</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="text-center p-6 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 hover:animate-bounce transition-colors">
+                <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Bank-Level Security</h3>
+                <p class="text-gray-600 dark:text-gray-300">Enterprise-grade security with Razorpay's trusted payment infrastructure</p>
+            </div>
+
+            <div class="text-center p-6 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 hover:animate-bounce transition-colors">
+                <div class="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Google OAuth</h3>
+                <p class="text-gray-600 dark:text-gray-300">Quick and secure authentication with your Google account</p>
+            </div>
+
+            <div class="text-center p-6 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 hover:animate-bounce transition-colors">
+                <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Fast Processing</h3>
+                <p class="text-gray-600 dark:text-gray-300">Lightning-fast payment processing with real-time webhook support</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="py-16 bg-gray-50 dark:bg-gray-900">
+    <div class="max-w-6xl mx-auto px-6">
+        <div class="flex items-center justify-between mb-12">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Featured Products</h2>
+                <p class="text-gray-600 dark:text-gray-300 mt-2">Discover our handpicked selection</p>
+            </div>
+            <a href="{% url 'store:product-list' %}" 
+               class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold flex items-center">
+                View all products
+                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+
+        {% if featured_products %}
+        <div class="grid md:grid-cols-3 gap-8">
+            {% for product in featured_products %}
+                {% include "store/partials/product_card.html" with product=product %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <div class="w-24 h-24 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Featured Products</h3>
+            <p class="text-gray-600 dark:text-gray-400">Check back later for featured items</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Recent Products -->
+<section class="py-16 bg-white dark:bg-gray-800">
+    <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-12 text-center">Recently Added</h2>
+        
+        {% if recent_products %}
+        <div class="grid md:grid-cols-3 gap-8">
+            {% for product in recent_products %}
+                {% include "store/partials/product_card.html" with product=product %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <div class="w-24 h-24 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Products Available</h3>
+            <p class="text-gray-600 dark:text-gray-400">New products will be added soon</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,29 @@
+<div
+    class="rounded-2xl border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm hover:shadow-lg transition-shadow">
+    <a href="{% url 'store:product-detail' product.id %}" class="block">
+        <div class="aspect-video w-full rounded-xl bg-slate-100 dark:bg-gray-700 object-cover">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.title }}" class="h-full w-full rounded-xl object-cover">
+            {% else %}
+            <div
+                class="h-full w-full rounded-xl bg-gradient-to-br from-slate-200 to-slate-300 dark:from-gray-600 dark:to-gray-700 flex items-center justify-center">
+                <svg class="w-16 h-16 text-slate-400 dark:text-gray-500" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+            </div>
+            {% endif %}
+        </div>
+        <h3 class="mt-4 text-lg font-semibold text-slate-900 dark:text-white">{{ product.title }}</h3>
+        <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">{{ product.description|truncatechars:120 }}</p>
+        <p class="mt-4 text-xl font-semibold text-slate-900 dark:text-white">₹{{ product.price_display|floatformat:2 }}
+        </p>
+    </a>
+    <form method="post" action="{% url 'store:add-to-cart' product.id %}" class="mt-4">
+        {% csrf_token %}
+        <button type="submit"
+            class="w-full rounded-xl bg-indigo-600 py-2 text-white font-medium hover:bg-indigo-700 transition-colors">Add
+            to cart</button>
+    </form>
+</div>

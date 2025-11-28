@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+{% load currency %}
+{% block title %}Checkout · PayDemo{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center text-sm text-slate-600 dark:text-slate-400 mb-4">
+            <a href="{% url 'store:cart' %}" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Cart</a>
+            <svg class="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+            <span class="text-slate-900 dark:text-white font-semibold">Checkout</span>
+        </div>
+        <h1 class="text-4xl font-extrabold text-slate-900 dark:text-white mb-2">Secure Checkout</h1>
+        <p class="text-lg text-slate-600 dark:text-slate-400">Complete your purchase safely with Razorpay</p>
+    </div>
+
+    <div class="grid gap-8 lg:grid-cols-[2fr,1fr]">
+        <!-- Order Review Section -->
+        <div class="space-y-6">
+            <!-- Order Items Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-slate-200 dark:border-gray-700 shadow-lg overflow-hidden">
+                <div class="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-gray-700 dark:to-gray-600 px-6 py-4 border-b border-slate-200 dark:border-gray-600">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                        <p class="text-xs uppercase tracking-wider font-bold text-slate-700 dark:text-slate-200">Order Review</p>
+                    </div>
+                </div>
+                
+                <ul class="divide-y divide-slate-200 dark:divide-gray-700">
+                    {% for item in items %}
+                    <li class="flex items-center justify-between p-6 hover:bg-slate-50 dark:hover:bg-gray-700/50 transition-colors group">
+                        <div class="flex-1">
+                            <p class="font-bold text-lg text-slate-900 dark:text-white mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                {{ item.product.title }}
+                            </p>
+                            <p class="text-sm text-slate-600 dark:text-slate-400 flex items-center">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-gray-700 font-semibold">
+                                    {{ item.qty }} × ₹{{ item.product.price_cents|rupees }}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-xl font-bold text-slate-900 dark:text-white">
+                                ₹{{ item.line_total_cents|rupees }}
+                            </p>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <!-- Total Section -->
+                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 px-6 py-5 border-t-2 border-indigo-200 dark:border-indigo-800">
+                    <div class="flex items-center justify-between">
+                        <span class="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-wide">Total Amount</span>
+                        <span class="text-3xl font-extrabold text-indigo-600 dark:text-indigo-400">₹{{ total_cents|rupees }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Badge -->
+            <div class="flex items-center justify-center gap-6 p-6 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl border border-emerald-200 dark:border-emerald-800">
+                <svg class="w-8 h-8 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>
+                <div>
+                    <p class="text-sm font-bold text-emerald-900 dark:text-emerald-100">Secure Payment</p>
+                    <p class="text-xs text-emerald-700 dark:text-emerald-300">256-bit SSL encrypted transaction</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Section -->
+        <div class="lg:sticky lg:top-24 self-start">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-slate-200 dark:border-gray-700 shadow-xl overflow-hidden">
+                <!-- Payment Header -->
+                <div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 px-6 py-8 text-white relative overflow-hidden">
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                    <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-24 h-24 bg-purple-500/20 rounded-full blur-xl"></div>
+                    <div class="relative z-10">
+                        <p class="text-xs uppercase tracking-widest font-bold text-indigo-200 mb-2">Step 2 of 2</p>
+                        <h2 class="text-2xl font-extrabold mb-2">Complete Payment</h2>
+                        <div class="flex items-center text-sm text-indigo-100">
+                            <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            Protected by Razorpay
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    <!-- Payment Info -->
+                    <div class="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                            </svg>
+                            <div>
+                                <p class="text-sm font-bold text-blue-900 dark:text-blue-100 mb-1">Sandbox Test Mode</p>
+                                <p class="text-xs text-blue-800 dark:text-blue-200">A Razorpay sandbox modal will open. Use the test cards provided in the README file.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Amount Display -->
+                    <div class="text-center p-6 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-700/50 dark:to-gray-600/50 rounded-xl">
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-2 font-semibold">You will pay</p>
+                        <p class="text-4xl font-extrabold text-slate-900 dark:text-white">₹{{ total_cents|rupees }}</p>
+                    </div>
+
+                    <!-- Form -->
+                    <form id="checkout-form">{% csrf_token %}</form>
+
+                    <!-- Pay Button -->
+                    <button id="pay-now"
+                        class="group relative w-full overflow-hidden rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 py-4 text-center text-lg font-bold text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
+                        <span class="relative z-10 flex items-center justify-center">
+                            <svg class="w-6 h-6 mr-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                            <span id="button-text">Pay Securely Now</span>
+                            <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                            </svg>
+                        </span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </button>
+
+                    <!-- Error Banner -->
+                    <div id="checkout-error" class="hidden p-4 rounded-xl border-2 border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-900/20 animate-shake">
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-rose-600 dark:text-rose-400 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                            </svg>
+                            <p id="error-text" class="text-sm font-semibold text-rose-800 dark:text-rose-200"></p>
+                        </div>
+                    </div>
+
+                    <!-- Payment Methods -->
+                    <div class="pt-4 border-t border-slate-200 dark:border-gray-700">
+                        <p class="text-xs text-center text-slate-500 dark:text-slate-400 mb-3 font-semibold">Accepted Payment Methods</p>
+                        <div class="flex items-center justify-center gap-4 opacity-60">
+                            <div class="px-3 py-2 bg-slate-100 dark:bg-gray-700 rounded-lg">
+                                <svg class="w-8 h-auto" viewBox="0 0 48 32" fill="none">
+                                    <rect width="48" height="32" rx="4" fill="#1434CB"/>
+                                    <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="white" font-size="8" font-weight="bold">VISA</text>
+                                </svg>
+                            </div>
+                            <div class="px-3 py-2 bg-slate-100 dark:bg-gray-700 rounded-lg">
+                                <svg class="w-8 h-auto" viewBox="0 0 48 32" fill="none">
+                                    <rect width="48" height="32" rx="4" fill="#EB001B"/>
+                                    <rect x="16" width="16" height="32" rx="4" fill="#F79E1B"/>
+                                </svg>
+                            </div>
+                            <div class="px-3 py-2 bg-slate-100 dark:bg-gray-700 rounded-lg">
+                                <svg class="w-8 h-auto" viewBox="0 0 48 32" fill="none">
+                                    <rect width="48" height="32" rx="4" fill="#00579F"/>
+                                    <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="white" font-size="6" font-weight="bold">UPI</text>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const payButton = document.getElementById("pay-now");
+        const buttonText = document.getElementById("button-text");
+        const csrfToken = document.querySelector("#checkout-form [name=csrfmiddlewaretoken]").value;
+        const errorBanner = document.getElementById("checkout-error");
+        const errorText = document.getElementById("error-text");
+
+        payButton.addEventListener("click", async function () {
+            payButton.disabled = true;
+            buttonText.textContent = "Processing...";
+            errorBanner.classList.add("hidden");
+            
+            try {
+                const orderResp = await fetch("{% url 'store:create-order' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": csrfToken,
+                    },
+                });
+                
+                if (!orderResp.ok) {
+                    throw new Error("Unable to create Razorpay order");
+                }
+                
+                const orderData = await orderResp.json();
+                const options = {
+                    key: "{{ razorpay_key_id }}",
+                    amount: orderData.amount,
+                    currency: orderData.currency,
+                    name: "PayDemo Store",
+                    description: "Order " + orderData.order_uuid,
+                    order_id: orderData.order_id,
+                    handler: async function (response) {
+                        buttonText.textContent = "Verifying...";
+                        await verifyPayment({ ...response, order_uuid: orderData.order_uuid });
+                    },
+                    prefill: {
+                        name: "{{ request.user.get_full_name|default:request.user.email }}",
+                        email: "{{ request.user.email }}",
+                    },
+                    theme: {
+                        color: "#4f46e5",
+                    },
+                    modal: {
+                        ondismiss: function () {
+                            payButton.disabled = false;
+                            buttonText.textContent = "Pay Securely Now";
+                        }
+                    }
+                };
+                
+                const razorpay = new Razorpay(options);
+                razorpay.open();
+            } catch (err) {
+                errorText.textContent = err.message;
+                errorBanner.classList.remove("hidden");
+                payButton.disabled = false;
+                buttonText.textContent = "Pay Securely Now";
+            }
+        });
+
+        async function verifyPayment(payload) {
+            const resp = await fetch("{% url 'store:verify-payment' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken,
+                },
+                body: JSON.stringify(payload),
+            });
+            
+            const data = await resp.json();
+            
+            if (resp.ok) {
+                buttonText.textContent = "Success! Redirecting...";
+                window.location.href = data.redirect_url;
+            } else {
+                errorText.textContent = data.error || "Unable to verify payment. Please retry.";
+                errorBanner.classList.remove("hidden");
+                payButton.disabled = false;
+                buttonText.textContent = "Pay Securely Now";
+            }
+        }
+    });
+</script>
+
+<style>
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-10px); }
+        75% { transform: translateX(10px); }
+    }
+    .animate-shake {
+        animation: shake 0.4s ease-in-out;
+    }
+</style>
+{% endblock %}

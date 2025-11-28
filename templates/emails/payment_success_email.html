@@ -1,0 +1,106 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Confirmation</title>
+</head>
+
+<body
+    style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div
+        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1>Payment Confirmed! 🎉</h1>
+        <p>Thank you for your purchase</p>
+    </div>
+
+    <div style="background: #f9f9f9; padding: 30px; border: 1px solid #ddd;">
+        <div style="font-size: 48px; color: #4CAF50; text-align: center; margin-bottom: 20px;">✓</div>
+
+        <p>Hello {{ customer_name }},</p>
+
+        <p>We've received your payment successfully! Your order is now being processed.</p>
+
+        <div
+            style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3 style="margin-top: 0; color: #667eea; border-bottom: 2px solid #667eea; padding-bottom: 10px;">Order
+                Details</h3>
+            <table style="width: 100%;">
+                <tr>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #eee;"><strong>Order ID:</strong></td>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #eee;">{{ order.id }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #eee;"><strong>Order Date:</strong></td>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #eee;">{{ order.created_at|date:"F d, Y" }}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #eee;"><strong>Payment ID:</strong></td>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #eee;">{{ payment_id }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 0;"><strong>Status:</strong></td>
+                    <td style="padding: 10px 0; color: #4CAF50; font-weight: bold;">PAID</td>
+                </tr>
+            </table>
+        </div>
+
+        <div
+            style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3 style="margin-top: 0; color: #667eea; border-bottom: 2px solid #667eea; padding-bottom: 10px;">Items
+                Ordered</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #667eea; color: white;">
+                        <th style="padding: 12px; text-align: left;">Item</th>
+                        <th style="padding: 12px; text-align: left;">Qty</th>
+                        <th style="padding: 12px; text-align: left;">Price</th>
+                        <th style="padding: 12px; text-align: left;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order_items %}
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #ddd;">{{ item.product.title }}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #ddd;">{{ item.qty }}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #ddd;">₹{{ item.unit_price_cents|intcomma }}
+                        </td>
+                        <td style="padding: 12px; border-bottom: 1px solid #ddd;">₹{{ item.line_total_cents|intcomma }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <tr style="font-weight: bold; font-size: 1.2em; background: #f0f0f0;">
+                        <td colspan="3" style="padding: 12px; text-align: right;">Total Amount:</td>
+                        <td style="padding: 12px;">₹{{ total_amount|floatformat:2 }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="{{ order_url }}"
+                style="display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0;">View
+                Order Details</a>
+        </div>
+
+        <p style="margin-top: 30px;">
+            <strong>What's Next?</strong><br>
+            Your order is being prepared for delivery. We'll send you another email with tracking information once your
+            order ships.
+        </p>
+
+        <p>If you have any questions about your order, please don't hesitate to contact our support team.</p>
+    </div>
+
+    <div
+        style="text-align: center; padding: 20px; color: #777; font-size: 0.9em; border-top: 1px solid #ddd; margin-top: 20px;">
+        <p>Thank you for shopping with PayDemo!</p>
+        <p>This is an automated email. Please do not reply to this message.</p>
+        <p>&copy; 2025 PayDemo. All rights reserved.</p>
+    </div>
+</body>
+
+</html>
