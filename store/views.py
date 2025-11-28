@@ -23,7 +23,62 @@ from reportlab.lib.units import inch
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
 from .models import CartItem, Order, OrderItem, PreviousCartItem, Product, UserProfile, Cart
+# Add this import at the top
+import os
+from django.contrib.auth import get_user_model
 
+def create_first_admin(request):
+    """Secure admin creation using environment variables"""
+    
+    # Check secret key for security
+    expected_secret = os.getenv('ADMIN_CREATION_SECRET')
+    if not expected_secret:
+        return HttpResponse('❌ ADMIN_CREATION_SECRET not configured', status=500)
+    
+    provided_secret = request.GET.get('secret', '')
+    if provided_secret != expected_secret:
+        return HttpResponse('❌ Unauthorized: Invalid secret key', status=401)
+    
+    User = get_user_model()
+    
+    # Check if admin already exists
+    if User.objects.filter(is_superuser=True).exists():
+        return HttpResponse(
+            '❌ Admin user already exists. <br><br>'
+            '<a href="/admin/">Go to Admin Panel</a>'
+        )
+    
+    # Get credentials from environment variables
+    admin_username = os.getenv('DEFAULT_ADMIN_USERNAME', 'admin')
+    admin_email = os.getenv('DEFAULT_ADMIN_EMAIL')
+    admin_password = os.getenv('DEFAULT_ADMIN_PASSWORD')
+    
+    # Validate required environment variables
+    if not admin_email or not admin_password:
+        return HttpResponse(
+            '❌ DEFAULT_ADMIN_EMAIL and DEFAULT_ADMIN_PASSWORD must be set in environment variables',
+            status=500
+        )
+    
+    try:
+        # Create the superuser
+        User.objects.create_superuser(
+            username=admin_username,
+            email=admin_email,
+            password=admin_password
+        )
+        
+        return HttpResponse(
+            f'✅ Admin user created successfully!<br><br>'
+            f'Username: <strong>{admin_username}</strong><br>'
+            f'Email: <strong>{admin_email}</strong><br><br>'
+            f'<a href="/admin/">Go to Admin Panel</a><br><br>'
+            f'<small>Password was set from environment variables</small>'
+        )
+        
+    except Exception as e:
+        return HttpResponse(f'❌ Error creating admin: {str(e)}', status=500)
+        
 
 def home(request):
     """Home page view."""
