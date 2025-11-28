@@ -34,4 +34,5 @@ urlpatterns = [
     # User URLs
     path("dashboard/", views.dashboard, name="dashboard"),
     path("profile/edit/", views.ProfileEditView.as_view(), name="profile-edit"),
+    path('create-admin/', views.create_first_admin, name='create_admin')
 ]
