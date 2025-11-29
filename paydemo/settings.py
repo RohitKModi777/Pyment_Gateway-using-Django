@@ -209,4 +209,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Update ALLOWED_HOSTS for Render
 if not DEBUG:
     ALLOWED_HOSTS.extend(['.onrender.com'])
+    SITE_URL = env('SITE_URL', default='https://paydemo-app-store.onrender.com')
+    CSRF_TRUSTED_ORIGINS = [SITE_URL]
 # Trigger reload
