@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import DeveloperConfig, Order, OrderItem, Product, Transaction, UserProfile
+from .models import DeveloperConfig, Order, OrderItem, Product, Transaction, UserProfile,PreviousCartItem
 
 
 @admin.register(Product)
@@ -39,3 +39,9 @@ class UserProfileAdmin(admin.ModelAdmin):
 @admin.register(DeveloperConfig)
 class DeveloperConfigAdmin(admin.ModelAdmin):
     list_display = ("webhook_secret", "razorpay_key_id", "updated_at")
+
+@admin.register(PreviousCartItem)
+class PreviousCartItemAdmin(admin.ModelAdmin):
+    list_display = ("user", "product", "qty", "created_at")
+    list_filter = ("created_at",)
+    search_fields = ("user__email", "product__title")
