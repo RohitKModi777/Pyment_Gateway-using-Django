@@ -252,6 +252,16 @@ def restore_cart_item(request, item_id):
 
 
 @login_required
+@require_POST
+def delete_previous_cart_item(request, item_id):
+    """Permanently delete item from previous cart history."""
+    prev_item = get_object_or_404(PreviousCartItem, pk=item_id, user=request.user)
+    product_title = prev_item.product.title
+    prev_item.delete()
+    messages.success(request, f"Permanently deleted {product_title} from history")
+    return redirect("store:cart")
+
+@login_required
 def checkout(request):
     """Checkout page."""
     try:
