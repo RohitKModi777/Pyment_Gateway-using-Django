@@ -128,17 +128,25 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Cloudinary Configuration - MUST come before MEDIA settings
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': env('CLOUDINARY_CLOUD_NAME', default=''),
+    'API_KEY': env('CLOUDINARY_API_KEY', default=''),
+    'API_SECRET': env('CLOUDINARY_API_SECRET', default='')
+}
 
-if not DEBUG:
-    CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': env('CLOUDINARY_CLOUD_NAME', default=''),
-        'API_KEY': env('CLOUDINARY_API_KEY', default=''),
-        'API_SECRET': env('CLOUDINARY_API_SECRET', default='')
-    }
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-# ← END OF CLOUDINARY CONFIGURATION
+# Media files - Using Cloudinary for storage
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
+MEDIA_URL = '/media/'  # This will be overridden by Cloudinary URLs
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
