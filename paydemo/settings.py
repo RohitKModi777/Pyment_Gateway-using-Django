@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary_storage', 
     'django.contrib.sites',
     'django.contrib.humanize',
     'allauth',
@@ -46,7 +47,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'store',
     'webhooks',
-    'cloudinary_storage', 
     'cloudinary',         
 ]
 
