@@ -17,7 +17,7 @@ urlpatterns = [
     path("cart/remove/<int:item_id>/", views.remove_from_cart, name="remove-from-cart"),
     path("cart/previous/", views.PreviousCartView.as_view(), name="previous-cart"),
     path("cart/restore/<int:item_id>/", views.restore_cart_item, name="restore-cart-item"),
-    
+    path("cart/previous/delete/<int:item_id>/", views.delete_previous_cart_item, name="delete-previous-cart-item"),
     # Checkout URLs
     path("checkout/", views.checkout, name="checkout"),
     path("checkout/create-order/", views.create_order, name="create-order"),
