@@ -30,8 +30,7 @@
                         style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                         <h4 style="margin: 0 0 10px 0; color: #11998e; font-size: 0.9em; text-transform: uppercase;">
                             Total Amount</h4>
-                        <p style="margin: 0; font-size: 1.1em; font-weight: bold; color: #4CAF50;">₹{{
-                            total_amount|floatformat:2 }}</p>
+                        <p style="margin: 0; font-size: 1.1em; font-weight: bold; color: #4CAF50;">₹{{total_amount|floatformat:2 }}</p>
                     </div>
                 </td>
                 <td style="width: 50%; padding: 10px;">
@@ -115,7 +114,7 @@
                     {% endfor %}
                     <tr style="font-weight: bold; font-size: 1.2em; background: #e8f5e9;">
                         <td colspan="3" style="padding: 12px; text-align: right;">Total:</td>
-                        <td style="padding: 12px;">₹{{ total_amount|floatformat:2 }}</td>
+                        <td style="padding: 12px;">₹{{ total_amount }}</td>
                     </tr>
                 </tbody>
             </table>
