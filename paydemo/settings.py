@@ -183,21 +183,31 @@ SOCIALACCOUNT_PROVIDERS = {
 SOCIALACCOUNT_ADAPTER = 'store.adapters.CustomSocialAccountAdapter'
 
 # Email Configuration - Gmail SMTP
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
-EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
-DEFAULT_FROM_EMAIL = env('EMAIL_HOST_USER', default='noreply@paydemo.local')
-ACCOUNT_EMAIL_SUBJECT_PREFIX = '[PayDemo] '
+if DEBUG:
+    # For development - print emails to console
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    EMAIL_HOST = 'localhost'
+    EMAIL_PORT = 1025
+    EMAIL_USE_TLS = False
+    EMAIL_HOST_USER = ''
+    EMAIL_HOST_PASSWORD = ''
+    DEFAULT_FROM_EMAIL = 'noreply@paydemo.local'
+else:
+    # For production on Render - Gmail SMTP
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+    DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER', 'noreply@paydemo.com')
+
+SUPPORT_EMAIL = env('SUPPORT_EMAIL', default='support@paydemo.com')
+SUPPORT_PHONE = env('SUPPORT_PHONE', default='+1-800-PAY-DEMO')
 
 RAZORPAY_KEY_ID = env('RAZORPAY_KEY_ID', default='')
 RAZORPAY_KEY_SECRET = env('RAZORPAY_KEY_SECRET', default='')
 WEBHOOK_SECRET = env('WEBHOOK_SECRET', default='')
-
-SUPPORT_EMAIL = env('SUPPORT_EMAIL', default='support@paydemo.com')
-SUPPORT_PHONE = env('SUPPORT_PHONE', default='+1-800-PAY-DEMO')
 
 TAILWIND_BUILD_COMMAND = env('TAILWIND_BUILD_COMMAND', default='npm run build:css')
 
@@ -207,8 +217,57 @@ SITE_URL = env('SITE_URL', default='http://localhost:8000')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Update ALLOWED_HOSTS for Render
+
 if not DEBUG:
-    ALLOWED_HOSTS.extend(['.onrender.com'])
-    SITE_URL = env('SITE_URL', default='https://paydemo-app-store.onrender.com')
+    ALLOWED_HOSTS = ['paydemo-app-store.onrender.com', 'localhost', '127.0.0.1']
+    SITE_URL = 'https://paydemo-app-store.onrender.com'
     CSRF_TRUSTED_ORIGINS = [SITE_URL]
+    
+    # Ensure HTTPS for allauth
+    ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = False  # Set to True if using custom domain with SSL
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+
+# Debugging settings
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'allauth': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
+    
 # Trigger reload
