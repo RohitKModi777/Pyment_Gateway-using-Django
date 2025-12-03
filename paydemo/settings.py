@@ -1,5 +1,4 @@
-ERROR 2025-12-03 09:53:05,743 exception Invalid HTTP_HOST header: 'paydemo-app-stores.onrender.com'. You may need to add 'paydemo-app-stores.onrender.com' to ALLOWED_HOSTS. how to fix it 
-"""
+ """
 Django settings for paydemo project.
 """
 
