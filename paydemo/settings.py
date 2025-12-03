@@ -216,12 +216,21 @@ SITE_URL = env('SITE_URL', default='http://localhost:8000')
 # Deployment configuration
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Update ALLOWED_HOSTS for Render
-
+# Update ALLOWED_HOSTS and security settings for production
 if not DEBUG:
-    ALLOWED_HOSTS = ['paydemo-app-stores.onrender.com', 'localhost', '127.0.0.1']
-    SITE_URL = 'https://paydemo-app-stores.onrender.com'
-    CSRF_TRUSTED_ORIGINS = [SITE_URL]
+    # Keep ALLOWED_HOSTS from environment, but ensure localhost is included for health checks
+    if 'localhost' not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append('localhost')
+    if '127.0.0.1' not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append('127.0.0.1')
+    
+    # Update SITE_URL based on the first allowed host (assuming it's the main domain)
+    if ALLOWED_HOSTS and ALLOWED_HOSTS[0] not in ['localhost', '127.0.0.1']:
+        SITE_URL = f'https://{ALLOWED_HOSTS[0]}'
+    
+    # Ensure CSRF_TRUSTED_ORIGINS includes the production URL
+    if SITE_URL not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(SITE_URL)
     
     # Ensure HTTPS for allauth
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
@@ -269,5 +278,3 @@ LOGGING = {
         },
     },
 }
-    
-# Trigger reload
