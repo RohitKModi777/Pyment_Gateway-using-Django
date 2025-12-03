@@ -219,8 +219,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Update ALLOWED_HOSTS for Render
 
 if not DEBUG:
-    ALLOWED_HOSTS = ['payment-OO78.onrender.com', 'localhost', '127.0.0.1']
-    SITE_URL = 'https://payment-OO78.onrender.com'
+    ALLOWED_HOSTS = ['payment-0078.onrender.com', 'localhost', '127.0.0.1']
+    SITE_URL = 'https://payment-0078.onrender.com'
     CSRF_TRUSTED_ORIGINS = [SITE_URL]
     
     # Ensure HTTPS for allauth
