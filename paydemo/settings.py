@@ -219,8 +219,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Update ALLOWED_HOSTS for Render
 
 if not DEBUG:
-    ALLOWED_HOSTS = ['paydemo-app-store.onrender.com', 'localhost', '127.0.0.1']
-    SITE_URL = 'https://paydemo-app-store.onrender.com'
+    ALLOWED_HOSTS = ['paydemo-app-stores.onrender.com', 'localhost', '127.0.0.1']
+    SITE_URL = 'https://paydemo-app-stores.onrender.com'
     CSRF_TRUSTED_ORIGINS = [SITE_URL]
     
     # Ensure HTTPS for allauth
