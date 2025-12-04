@@ -1,4 +1,5 @@
-﻿import json
+import json
+import django.db
 from decimal import Decimal
 from io import BytesIO
 
@@ -189,10 +190,10 @@ def update_cart_item(request, item_id):
             cart_item.qty -= 1
             cart_item.save()
         else:
-            PreviousCartItem.objects.create(
+            PreviousCartItem.objects.update_or_create(
                 user=request.user,
                 product=cart_item.product,
-                qty=cart_item.qty,
+                defaults={'qty': cart_item.qty},
             )
             cart_item.delete()
             messages.info(request, f"{cart_item.product.title} moved to history")
@@ -206,10 +207,10 @@ def remove_from_cart(request, item_id):
     """Remove item from cart and move to history."""
     cart_item = get_object_or_404(CartItem, pk=item_id, cart__user=request.user)
     
-    PreviousCartItem.objects.create(
+    PreviousCartItem.objects.update_or_create(
         user=request.user,
         product=cart_item.product,
-        qty=cart_item.qty,
+        defaults={'qty': cart_item.qty},
     )
     
     product_title = cart_item.product.title
@@ -366,26 +367,27 @@ def verify_payment(request):
             order.save()
             
             # Create transaction record
-            transaction, created = Transaction.objects.get_or_create(
-                order=order,
-                reference=data["razorpay_payment_id"],
-                defaults={
-                    "user": order.user,
-                    "amount_cents": order.total_amount_cents,
-                    "status": Transaction.STATUS_SUCCESS,
-                    "provider": Transaction.PROVIDER_RAZORPAY,
-                    "payload": data,
-                }
-            )
-            
-            if not created:
-                # Update existing transaction
-                transaction.status = Transaction.STATUS_SUCCESS
-                transaction.payload = data
-                transaction.save(update_fields=["status", "payload", "updated_at"])
-                logger.info(f"Updated existing transaction {transaction.pk} for order {order.pk}")
-            else:
-                logger.info(f"Created new transaction {transaction.pk} for order {order.pk}")
+            with django.db.transaction.atomic():
+                transaction, created = Transaction.objects.get_or_create(
+                    order=order,
+                    reference=data["razorpay_payment_id"],
+                    defaults={
+                        "user": order.user,
+                        "amount_cents": order.total_amount_cents,
+                        "status": Transaction.STATUS_SUCCESS,
+                        "provider": Transaction.PROVIDER_RAZORPAY,
+                        "payload": data,
+                    }
+                )
+                
+                if not created:
+                    # Update existing transaction
+                    transaction.status = Transaction.STATUS_SUCCESS
+                    transaction.payload = data
+                    transaction.save(update_fields=["status", "payload", "updated_at"])
+                    logger.info(f"Updated existing transaction {transaction.pk} for order {order.pk}")
+                else:
+                    logger.info(f"Created new transaction {transaction.pk} for order {order.pk}")
             
             # Send email notifications
             try:
